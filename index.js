@@ -1,17 +1,68 @@
 // /_ server _/
+const http = require("http");
 const express = require("express");
 const fullSite = require("./app/main");
+const reflectionLinks = require("./app/videos");
+const reflectionVideo = require("./app/video");
+const reflectionsText = require("./app/reflectionsText");
+const reflectionTextSingle = require("./app/singleReflectionText");
 
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 8000;
-app.set("port", port);
+
+const server = http.createServer(app);
+
+// test host endpoint
+app.get('/', (req, res) => {
+    return res.send({ message: 'Welcome' });
+})
+
+// Fetch video
+app.get('/vid/*', async (req, res) => {
+    let link = req.path;
+    link = link.split("/");
+    link = link.slice(2,)
+    link = link.join("/");
+    const response = await reflectionVideo(`https://bible.usccb.org/${link}`)
+    return res.send({ youtubeId: response });
+})
 
 app.get("/mass-readings/*", async (req, res) => {
     const date = req.path.split("/")[2];
-    const response = await fullSite(`https://bible.usccb.org/bible/readings/${date}.cfm`);
+    const response = date ?
+        await fullSite(`https://bible.usccb.org/bible/readings/${date}.cfm`)
+        : await fullSite("https://bible.usccb.org/bible/readings/");
     res.send(response);
     // res.send(date);
 })
-app.listen(port, () => console.log(`App started on port ${port}.`));
+
+app.get("/reflections/list", async (req, res) => {
+    const response = await reflectionLinks("https://bible.usccb.org/podcasts/video");
+    res.send(response);
+})
+
+app.get("/reflections/text/list", async (req, res) => {
+    const response = await reflectionsText("https://catholicdioceseofwichita.org/reflections/");
+    res.send(response);
+})
+
+app.post("/reflections/text/single/*", async (req, res) => {
+    let date = req.path;
+    const { url } = req.body;
+    date = date.split("/");
+    date = date.slice(4,)
+    date = date.join("/");
+    const year = "20" + date.split("-")[0];
+    const month = date.split("-")[1];
+    const day = date.split("-")[2];
+    const response = req.body.url == "" ?
+        await reflectionTextSingle(`https://catholicdioceseofwichita.org/reflections/${year}-${month}-${day}`)
+        : await reflectionTextSingle(url);
+    res.send(response);
+})
+
+server.listen(port, () => console.log(`App started on port ${port}.`));
