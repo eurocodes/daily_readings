@@ -58,7 +58,8 @@ async function fullSite(url) {
 
     const content = {
         title: $("title").text().split("|")[0],
-        lectionary: $(".b-lectionary").find('p').text(),
+        lectionary: $(".b-lectionary h2").siblings().text(),
+        ref: $(".content-header h2").text(),
         length: read.length,
         verse: verse,
         text: readArr,
