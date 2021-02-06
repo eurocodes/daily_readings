@@ -2,6 +2,7 @@
 const http = require("http");
 const express = require("express");
 const fullSite = require("./app/main");
+const getSpecialDays = require("./app/specialDays");
 const reflectionLinks = require("./app/videos");
 const reflectionVideo = require("./app/video");
 const reflectionsText = require("./app/reflectionsText");
@@ -33,11 +34,19 @@ app.get('/vid/*', async (req, res) => {
 
 app.get("/mass-readings/*", async (req, res) => {
     const date = req.path.split("/")[2];
-    const response = date ?
+    let response = date ?
         await fullSite(`https://bible.usccb.org/bible/readings/${date}.cfm`)
         : await fullSite("https://bible.usccb.org/bible/readings/");
+    if (!response.text[0]) {
+        response = await getSpecialDays(`https://bible.usccb.org/bible/readings/${date}.cfm`)
+    }
     res.send(response);
-    // res.send(date);
+})
+
+app.get("/readings/special/*", async (req, res) => {
+    const sufix = req.path.split("/")[3];
+    let response = await fullSite(`https://bible.usccb.org/bible/readings/${sufix}`)
+    res.send(response);
 })
 
 app.get("/reflections/list", async (req, res) => {
