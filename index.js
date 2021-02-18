@@ -7,6 +7,7 @@ const reflectionLinks = require("./app/videos");
 const reflectionVideo = require("./app/video");
 const reflectionsText = require("./app/reflectionsText");
 const reflectionTextSingle = require("./app/singleReflectionText");
+const aboutInfo = require("./app/about");
 
 
 const app = express();
@@ -71,6 +72,12 @@ app.post("/reflections/text/single/*", async (req, res) => {
     const response = req.body.url == "" ?
         await reflectionTextSingle(`https://catholicdioceseofwichita.org/reflections/${year}-${month}-${day}`)
         : await reflectionTextSingle(url);
+    res.send(response);
+})
+
+// Get about details
+app.get("/about", async (req, res) => {
+    const response = await aboutInfo("https://www.euteksoftwares.site/about.html");
     res.send(response);
 })
 
