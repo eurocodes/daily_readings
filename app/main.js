@@ -56,10 +56,12 @@ async function fullSite(url) {
                 readObj.id = i
                 readObj.title = read[i]
                 readObj.verse = read[i + 1]
-                if (read[i].toUpperCase() == "RESPONSORIAL PSALM" || read[i].toUpperCase() == "VERSE BEFORE THE GOSPEL" || read[i].toUpperCase() == "ALLELUIA") {
+                if (read[i].toUpperCase() == "RESPONSORIAL PSALM" ||
+                    read[i].toUpperCase() == "VERSE BEFORE THE GOSPEL" ||
+                    read[i].toUpperCase() == "ALLELUIA") {
                     readObj.text = read[i + 2]
                 } else {
-                    readObj.text = read[i + 2].replace(/\s\s+/g, "").split("\n").join(" ");
+                    readObj.text = read[i + 2].replace(/\s\s+/g, " ").split("\n").join(" ");
                 }
             }
             readArr.push(readObj)

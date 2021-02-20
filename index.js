@@ -41,23 +41,23 @@ app.get("/mass-readings/*", async (req, res) => {
     if (!response.text[0]) {
         response = await getSpecialDays(`https://bible.usccb.org/bible/readings/${date}.cfm`)
     }
-    res.send(response);
+    return res.status(200).send(response);
 })
 
 app.get("/readings/special/*", async (req, res) => {
     const sufix = req.path.split("/")[3];
     let response = await fullSite(`https://bible.usccb.org/bible/readings/${sufix}`)
-    res.send(response);
+    return res.status(200).send(response);
 })
 
 app.get("/reflections/list", async (req, res) => {
     const response = await reflectionLinks("https://bible.usccb.org/podcasts/video");
-    res.send(response);
+    return res.status(200).send(response);
 })
 
 app.get("/reflections/text/list", async (req, res) => {
     const response = await reflectionsText("https://catholicdioceseofwichita.org/reflections/");
-    res.send(response);
+    return res.status(200).send(response);
 })
 
 app.post("/reflections/text/single/*", async (req, res) => {
@@ -72,13 +72,13 @@ app.post("/reflections/text/single/*", async (req, res) => {
     const response = req.body.url == "" ?
         await reflectionTextSingle(`https://catholicdioceseofwichita.org/reflections/${year}-${month}-${day}`)
         : await reflectionTextSingle(url);
-    res.send(response);
+    return res.status(200).send(response);
 })
 
 // Get about details
 app.get("/about", async (req, res) => {
     const response = await aboutInfo("https://www.euteksoftwares.site/about.html");
-    res.send(response);
+    return res.status(200).send(response);
 })
 
 server.listen(port, () => console.log(`App started on port ${port}.`));
